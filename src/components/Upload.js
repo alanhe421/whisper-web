@@ -6,7 +6,8 @@ function Upload() {
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
-
+  const [summary, setSummary] = useState('');
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   // 添加一个状态来存储音频时长
   const [audioDuration, setAudioDuration] = useState(null);
@@ -76,11 +77,49 @@ function Upload() {
 
   const handleDownload = () => {
     const element = document.createElement("a");
-    const fileBlob = new Blob([transcript], {type: 'text/plain'});
+    const fileBlob = new Blob([transcript], { type: 'text/plain' });
     element.href = URL.createObjectURL(fileBlob);
     element.download = "transcript.txt";
     document.body.appendChild(element);
     element.click();
+  };
+
+
+  const generateSummary = async () => {
+    if (!transcript) return;
+    setIsSummarizing(true);
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: '你是一个专业的文本总结助手，请对提供的文本进行简洁的总结。'
+            },
+            {
+              role: 'user',
+              content: transcript
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        })
+      });
+
+      const data = await response.json();
+      setSummary(data.choices[0].message.content);
+    } catch (error) {
+      console.error('Error generating summary:', error);
+    } finally {
+      setIsSummarizing(false);
+    }
   };
 
 
@@ -94,7 +133,7 @@ function Upload() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Whisper Web 翻译</h1>
+        <h1 className="text-3xl font-bold mb-2">Whisper Web</h1>
         <p className="text-gray-600">上传音频文件，获取翻译结果</p>
         <div className="mt-2 text-sm text-gray-500">
           支持的格式：mp3, mp4, mpeg, mpga, m4a, wav, webm · 最大文件大小：25 MB
@@ -137,9 +176,9 @@ function Upload() {
               strokeWidth="0.2"
             >
               <path
-                d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z"/>
+                d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
               <path
-                d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25z"/>
+                d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25z" />
             </svg>
           </div>
           {file ? (
@@ -180,8 +219,22 @@ function Upload() {
             >
               下载字幕
             </button>
+            <button
+              onClick={generateSummary}
+              disabled={isSummarizing}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-blue-300"
+            >
+              {isSummarizing ? '生成中...' : 'AI 总结'}
+            </button>
           </div>
           <p className="text-gray-700 whitespace-pre-wrap">{transcript}</p>
+        </div>
+      )}
+
+      {summary && (
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h3 className="text-lg font-semibold mb-2">AI 总结</h3>
+          <p className="text-gray-700">{summary}</p>
         </div>
       )}
     </div>
