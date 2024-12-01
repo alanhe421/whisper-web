@@ -187,6 +187,7 @@ function Upload() {
               <p className="text-gray-500 mb-2">
                 {(file.size / (1024 * 1024)).toFixed(2)} MB
                 {audioDuration && ` • ${formatDuration(audioDuration)}`}
+                {audioDuration && ` • 预计费用: ${(Math.ceil(audioDuration / 60) * 0.006).toFixed(3)}USD`}
               </p>
               <button
                 onClick={(e) => {
