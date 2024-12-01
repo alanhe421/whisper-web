@@ -7,6 +7,20 @@ function Upload() {
     const [dragActive, setDragActive] = useState(false);
     const fileInputRef = useRef(null);
   
+
+    // 添加一个状态来存储音频时长
+    const [audioDuration, setAudioDuration] = useState(null);
+
+    // 获取音频时长的函数
+    const getAudioDuration = (file) => {
+        const audio = new Audio();
+        audio.src = URL.createObjectURL(file);
+        audio.addEventListener('loadedmetadata', () => {
+            setAudioDuration(audio.duration);
+            URL.revokeObjectURL(audio.src); // 清理创建的 URL
+        });
+    };
+
     const handleDrag = (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -30,6 +44,7 @@ function Upload() {
     const handleFileChange = (e) => {
       if (e.target.files && e.target.files[0]) {
         setFile(e.target.files[0]);
+        getAudioDuration(e.target.files[0]);
       }
     };
   
@@ -49,7 +64,7 @@ function Upload() {
           },
           body: formData,
         });
-  
+        debugger;
         const data = await response.json();
         setTranscript(data.text);
       } catch (error) {
@@ -68,11 +83,30 @@ function Upload() {
       element.click();
     };
   
+
+    // 格式化时间的辅助函数
+    const formatDuration = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}min:${remainingSeconds.toString().padStart(2, '0')}s`;
+    };
+
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Whisper Web 翻译</h1>
           <p className="text-gray-600">上传音频文件，获取翻译结果</p>
+          <div className="mt-2 text-sm text-gray-500">
+          支持的格式：mp3, mp4, mpeg, mpga, m4a, wav, webm · 最大文件大小：25 MB
+          <a 
+            href="https://platform.openai.com/docs/guides/speech-to-text?lang=curl" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="ml-2 text-blue-500 hover:text-blue-600 hover:underline"
+          >
+            了解更多 ↗
+          </a>
+        </div>
         </div>
   
         <div 
@@ -97,6 +131,10 @@ function Upload() {
             {file ? (
               <>
                 <p className="text-lg font-medium">{file.name}</p>
+                <p className="text-gray-500 mb-2">
+            {(file.size / (1024 * 1024)).toFixed(2)} MB
+            {audioDuration && ` • ${formatDuration(audioDuration)}`}
+        </p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
