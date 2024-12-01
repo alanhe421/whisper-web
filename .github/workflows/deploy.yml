@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    - master
+    branches:
+      - master
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -15,10 +16,15 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+
       - name: Install Dependencies
         run: npm install
+
       - name: Build
         run: npm run build
+        env:
+          PUBLIC_URL: /whisper-web
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
