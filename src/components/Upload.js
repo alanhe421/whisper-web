@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import logo from '../logo.png';
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -167,7 +168,7 @@ function Upload() {
 
         <div className="space-y-4">
         <div className="flex justify-center items-center mb-6">
-            <img src={'/logo.png'} alt={''} className="w-32 h-32 object-contain opacity-90"/>
+            <img src={logo} alt={''} className="w-32 h-32 object-contain opacity-90"/>
           </div>
           {file ? (
             <>
