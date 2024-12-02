@@ -52,6 +52,11 @@ function Upload() {
 
   const handleUpload = async () => {
     if (!file) return;
+    const apiToken = localStorage.getItem('openai_api_token');
+    if (!apiToken) {
+      alert('请先设置 OpenAI API Token');
+      return;
+    }
     setIsLoading(true);
     const formData = new FormData();
     formData.append('file', file);
@@ -62,7 +67,7 @@ function Upload() {
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${apiToken}`,
         },
         body: formData,
       });
@@ -88,6 +93,11 @@ function Upload() {
 
   const generateSummary = async () => {
     if (!transcript) return;
+    const apiToken = localStorage.getItem('openai_api_token');
+    if (!apiToken) {
+      alert('请先设置 OpenAI API Token');
+      return;
+    }
     setIsSummarizing(true);
 
     try {
@@ -95,7 +105,7 @@ function Upload() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${apiToken}`,
         },
         body: JSON.stringify({
           model: 'gpt-3.5-turbo',
