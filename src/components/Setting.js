@@ -3,11 +3,17 @@ import React, { useState, useEffect } from 'react';
 function Setting() {
   const [isOpen, setIsOpen] = useState(false);
   const [apiToken, setApiToken] = useState('');
+  const [selectedModel, setSelectedModel] = useState('whisper-1');
 
   useEffect(() => {
     const savedToken = localStorage.getItem('openai_api_token');
+    const savedModel = localStorage.getItem('selected_model');
+    
     if (savedToken) {
       setApiToken(savedToken);
+    }
+    if (savedModel) {
+      setSelectedModel(savedModel);
     }
   }, []);
 
@@ -15,12 +21,8 @@ function Setting() {
     if (apiToken.trim()) {
       localStorage.setItem('openai_api_token', apiToken.trim());
     }
+    localStorage.setItem('selected_model', selectedModel);
     setIsOpen(false);
-  };
-
-  const handleDelete = () => {
-    localStorage.removeItem('openai_api_token');
-    setApiToken('');
   };
 
   return (
@@ -76,13 +78,20 @@ function Setting() {
                   placeholder="sk-..."
                 />
               </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={handleDelete}
-                  className="px-4 py-2 text-red-600 hover:text-red-700"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  模型选择
+                </label>
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  删除
-                </button>
+                  <option value="whisper-1">whisper-1</option>
+                  {/* 可以在这里添加更多选项 */}
+                </select>
+              </div>
+              <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleSave}
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"

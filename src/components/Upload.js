@@ -72,7 +72,6 @@ function Upload() {
         },
         body: formData,
       });
-      debugger;
       const data = await response.json();
       setTranscript(data.text);
     } catch (error) {
