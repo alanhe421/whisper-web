@@ -40,6 +40,7 @@ function Upload() {
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && droppedFile.type.startsWith('audio/')) {
       setFile(droppedFile);
+      getAudioDuration(droppedFile);
     }
   };
 
