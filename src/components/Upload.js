@@ -168,7 +168,7 @@ function Upload() {
         />
 
         <div className="space-y-4">
-        <div className="flex justify-center items-center mb-6">
+          <div className="flex justify-center items-center mb-6">
             <img src={logo} alt={''} className="w-32 h-32 object-contain opacity-90"/>
           </div>
           {file ? (
