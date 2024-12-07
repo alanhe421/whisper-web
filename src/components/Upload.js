@@ -64,6 +64,7 @@ function Upload() {
     formData.append('file', file);
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'verbose_json');
+    // formData.append('timestamp_granularities[]', 'word');
 
     try {
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
@@ -228,7 +229,7 @@ function Upload() {
               onClick={handleDownload}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             >
-              下���字幕
+              下载字幕
             </button>
             <button
               onClick={generateSummary}
