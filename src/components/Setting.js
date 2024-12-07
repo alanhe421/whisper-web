@@ -4,16 +4,21 @@ function Setting() {
   const [isOpen, setIsOpen] = useState(false);
   const [apiToken, setApiToken] = useState('');
   const [selectedModel, setSelectedModel] = useState('whisper-1');
+  const [currency, setCurrency] = useState('USD');
 
   useEffect(() => {
     const savedToken = localStorage.getItem('openai_api_token');
     const savedModel = localStorage.getItem('selected_model');
+    const savedCurrency = localStorage.getItem('currency');
     
     if (savedToken) {
       setApiToken(savedToken);
     }
     if (savedModel) {
       setSelectedModel(savedModel);
+    }
+    if (savedCurrency) {
+      setCurrency(savedCurrency);
     }
   }, []);
 
@@ -22,6 +27,7 @@ function Setting() {
       localStorage.setItem('openai_api_token', apiToken.trim());
     }
     localStorage.setItem('selected_model', selectedModel);
+    localStorage.setItem('currency', currency);
     setIsOpen(false);
   };
 
@@ -88,7 +94,20 @@ function Setting() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="whisper-1">whisper-1</option>
-                  {/* 可以在这里添加更多选项 */}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  结算货币
+                </label>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="USD">USD (美元)</option>
+                  <option value="CNY">CNY (人民币)</option>
+                  <option value="EUR">EUR (欧元)</option>
                 </select>
               </div>
               <div className="flex justify-end space-x-3">

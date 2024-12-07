@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import logo from '../logo.png';
+import { exchangeRates, currencySymbols } from '../config/exchangeRates';
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -134,11 +135,20 @@ function Upload() {
   };
 
 
-  // 格式化时间的辅助函数
+  // 格式化时间的辅助��数
   const formatDuration = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}min:${remainingSeconds.toString().padStart(2, '0')}s`;
+  };
+
+  const calculatePrice = (durationInSeconds) => {
+    const minutes = Math.ceil(durationInSeconds / 60);
+    const priceInUSD = minutes * 0.006;
+    const currency = localStorage.getItem('currency') || 'USD';
+    const rate = exchangeRates[currency];
+    const symbol = currencySymbols[currency];
+    return `${symbol}${(priceInUSD * rate).toFixed(3)}`;
   };
 
   return (
@@ -187,7 +197,7 @@ function Upload() {
               <p className="text-gray-500 mb-2">
                 {(file.size / (1024 * 1024)).toFixed(2)} MB
                 {audioDuration && ` • ${formatDuration(audioDuration)}`}
-                {audioDuration && ` • 预计费用: ${(Math.ceil(audioDuration / 60) * 0.006).toFixed(3)}USD`}
+                {audioDuration && ` • 预计费用: ${calculatePrice(audioDuration)}`}
               </p>
               <button
                 onClick={(e) => {
@@ -218,7 +228,7 @@ function Upload() {
               onClick={handleDownload}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             >
-              下载字幕
+              下���字幕
             </button>
             <button
               onClick={generateSummary}
