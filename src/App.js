@@ -2,6 +2,7 @@ import React from 'react';
 import Upload from './components/Upload';
 import Setting from './components/Setting';
 import Footer from './components/Footer';
+import './config/exchangeRates';
 
 function App() {
   return (

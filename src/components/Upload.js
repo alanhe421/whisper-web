@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import logo from '../logo.png';
-import { exchangeRates, currencySymbols } from '../config/exchangeRates';
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -147,8 +146,8 @@ function Upload() {
     const minutes = Math.ceil(durationInSeconds / 60);
     const priceInUSD = minutes * 0.006;
     const currency = localStorage.getItem('currency') || 'USD';
-    const rate = exchangeRates[currency];
-    const symbol = currencySymbols[currency];
+    const rate = window.exchangeRates[currency];
+    const symbol = currency;
     return `${symbol}${(priceInUSD * rate).toFixed(3)}`;
   };
 
