@@ -21,9 +21,12 @@ jobs:
           curl -s "https://api.exchangeratesapi.io/v1/latest?access_key=${ACCESS_KEY}" -o public/exchange-rates.json
           echo "Fetched successfully."
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Build
+        run: |
+          git add .
+      - name: Deploy GitHub
+        uses: actions-js/push@master
         with:
-          folder: public
+          message: Update exchange rates
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
-          clean: true
