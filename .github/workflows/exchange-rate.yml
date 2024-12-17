@@ -1,0 +1,29 @@
+name: Fetch Exchange Rates Daily
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 00:00 UTC 执行
+  workflow_dispatch:  # 手动触发 workflow
+
+jobs:
+  fetch-exchange-rates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Exchange Rates
+        env:
+          ACCESS_KEY: ${{ secrets.EXCHANGE_API_KEY }}
+        run: |
+          echo "Fetching latest exchange rates..."
+          curl -s "https://api.exchangeratesapi.io/v1/latest?access_key=${ACCESS_KEY}" -o public/exchange-rates.json
+          echo "Fetched successfully."
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
+          branch: main
+          clean: true
